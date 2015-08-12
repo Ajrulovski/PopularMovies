@@ -33,7 +33,7 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
     protected String doInBackground(Object... params) {
         String sortby = (String) params[0];
         callerActivity = (Discovery) params[1];
-        String apikey = "MY_API_KEY";
+        String apikey = "fd0b9e13dcced1f221059f5bc4f944ed";
 
         String res = null;
 
@@ -41,6 +41,8 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
+
+        //Log.i("CALLED","CALLED!!!");
 
         // Will contain the raw JSON response as a string.
         String moviesJsonStr = null;

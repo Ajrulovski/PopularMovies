@@ -10,10 +10,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import ins.com.mk.popularmovies.sync.ImageLoaderAsyncTask;
 
 public class DetailView extends ActionBarActivity {
 
@@ -44,7 +44,8 @@ public class DetailView extends ActionBarActivity {
             tvTitle.setText(row.getString("title"));
 
             ImageView posterView = (ImageView) findViewById(R.id.poster);
-            new ImageLoaderAsyncTask(posterView).execute("http://image.tmdb.org/t/p/w185" + row.getString("poster"));
+            //new ImageLoaderAsyncTask(posterView).execute("http://image.tmdb.org/t/p/w185" + row.getString("poster"));
+            Picasso.with(getApplicationContext()).load("http://image.tmdb.org/t/p/w185" + row.getString("poster")).into(posterView);
 
             TextView tvPlot = (TextView) findViewById(R.id.plot);
             tvPlot.setText(row.getString("plot"));
