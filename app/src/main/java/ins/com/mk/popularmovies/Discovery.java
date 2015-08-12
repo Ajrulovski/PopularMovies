@@ -1,6 +1,9 @@
 package ins.com.mk.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -96,8 +99,15 @@ public class Discovery extends ActionBarActivity {
 
     // run the async task
     private void startWebServiceTask(String sortCriteria) {
-        MovieAPIAsyncTask webServiceTask = new MovieAPIAsyncTask();
-        webServiceTask.execute(sortCriteria, this);
+        if (isNetworkAvailable()) {
+            MovieAPIAsyncTask webServiceTask = new MovieAPIAsyncTask();
+            webServiceTask.execute(sortCriteria, this);
+        }
+        else
+        {
+            Toast toast = Toast.makeText(getApplicationContext(), "No network connection. Please check your internet connection and try again.", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     // bind the GridView with the adapter
@@ -151,5 +161,12 @@ public class Discovery extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
