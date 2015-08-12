@@ -33,7 +33,7 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
     protected String doInBackground(Object... params) {
         String sortby = (String) params[0];
         callerActivity = (Discovery) params[1];
-        String apikey = "fd0b9e13dcced1f221059f5bc4f944ed";
+        String apikey = "MY_API_KEY";
 
         String res = null;
 
