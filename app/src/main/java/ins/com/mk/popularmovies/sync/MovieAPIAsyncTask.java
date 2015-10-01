@@ -33,7 +33,7 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
     protected String doInBackground(Object... params) {
         String sortby = (String) params[0];
         callerActivity = (Discovery) params[1];
-        String apikey = "MY_API_KEY";
+        String apikey = "fd0b9e13dcced1f221059f5bc4f944ed";
 
         String res = null;
 
@@ -131,6 +131,8 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
         final String OMD_RATING = "vote_average";
         final String OMD_RELEASEDATE = "release_date";
 
+        final String OMD_MOVIE_ID = "id";
+
         final String OMD_RESULTS = "results";
 
         try {
@@ -142,6 +144,7 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
             String plot;
             String rating;
             String releasedate;
+            String id;
 
             for (int i = 0; i < resultsArray.length(); i++) {
                 JSONObject row = resultsArray.getJSONObject(i);
@@ -150,6 +153,7 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
                 plot = row.getString(OMD_PLOT);
                 rating = row.getString(OMD_RATING);
                 releasedate = row.getString(OMD_RELEASEDATE);
+                id = row.getString(OMD_MOVIE_ID);
 
                 //generate the metadata JSON object
                 JSONObject movieObject = new JSONObject();
@@ -158,6 +162,7 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
                 movieObject.put("plot", plot);
                 movieObject.put("rating", rating);
                 movieObject.put("releasedate", releasedate);
+                movieObject.put("id", id);
 
                 metadata.add(i, movieObject);
                 //full_result = full_result+title+","+poster+","+plot+","+rating+","+releasedate+";";

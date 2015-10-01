@@ -2,6 +2,7 @@ package ins.com.mk.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -15,7 +16,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import ins.com.mk.popularmovies.helper.GridViewAdapter;
 import ins.com.mk.popularmovies.helper.MovieResult;
+import ins.com.mk.popularmovies.helper.Utility;
 import ins.com.mk.popularmovies.sync.MovieAPIAsyncTask;
 
 public class Discovery extends ActionBarActivity {
@@ -31,6 +32,7 @@ public class Discovery extends ActionBarActivity {
 
     ArrayList<MovieResult> list;
     MovieResult savedMovieResult;
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,20 +61,28 @@ public class Discovery extends ActionBarActivity {
             // read the data from parcelable
             savedMovieResult = savedInstanceState.getParcelable("object");
 
+            //metadataByItem.clear();
+            //metadataByItem = loadMoviesFromString(savedMovieResult.metadata);
+            ////Log.i("MOVIES_STRING",savedMovieResult.metadata);
+            Utility u = new Utility();
+
             try {
-                // deserialize the string from the parcelable into an JSONArray
-                // and then loop through the array to fill an arraylist of JSONObjects
-                // as we need that arraylist to send an item of it towards the detailView activity
-                JSONArray jsonActList = new JSONArray(savedMovieResult.metadata);
-                metadataByItem.clear();
-                for (int i = 0; i < jsonActList.length(); i++) {
-                    JSONObject temp = jsonActList.getJSONObject(i);
-                    metadataByItem.add(temp);
-                }
+            //    // deserialize the string from the parcelable into an JSONArray
+            //    // and then loop through the array to fill an arraylist of JSONObjects
+            //    // as we need that arraylist to send an item of it towards the detailView activity
+            //    JSONArray jsonActList = new JSONArray(savedMovieResult.metadata);
+            //    metadataByItem.clear();
+            //    for (int i = 0; i < jsonActList.length(); i++) {
+            //        JSONObject temp = jsonActList.getJSONObject(i);
+            //        metadataByItem.add(temp);
+            //    }
+                u.getMovieDataFromJsonString(savedMovieResult.metadata);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            populateGridWithPosters(savedMovieResult.poster,metadataByItem);
+
+            populateGridWithPosters(u.allurls,u.metadata);
+            //populateGridWithPosters(savedMovieResult.poster,metadataByItem);
         }
 
         // handle gridview onItemClick
@@ -90,6 +100,27 @@ public class Discovery extends ActionBarActivity {
             }
         });
     }
+
+//    public ArrayList<JSONObject> loadMoviesFromString(String moviedata)
+//    {
+//        ArrayList<JSONObject> moviesByItem = new ArrayList<JSONObject>();
+//
+//        try {
+//            // deserialize the string from the parcelable into an JSONArray
+//            // and then loop through the array to fill an arraylist of JSONObjects
+//            // as we need that arraylist to send an item of it towards the detailView activity
+//            JSONArray jsonActList = new JSONArray(moviedata);
+//            //moviesByItem.clear();
+//            for (int i = 0; i < jsonActList.length(); i++) {
+//                JSONObject temp = jsonActList.getJSONObject(i);
+//                moviesByItem.add(temp);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return moviesByItem;
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -152,6 +183,22 @@ public class Discovery extends ActionBarActivity {
             Toast toast = Toast.makeText(getApplicationContext(), "Sorted movies by rating.", Toast.LENGTH_SHORT);
             toast.show();
             startWebServiceTask("vote_average.desc");
+            return true;
+        }
+
+        if (id == R.id.action_favs) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Showing favourite movies.", Toast.LENGTH_SHORT);
+            toast.show();
+            //startWebServiceTask("vote_average.desc");
+            prefs = getSharedPreferences("mk.com.ins.popularmovies", Context.MODE_PRIVATE);
+            String movieJsonListString = "["+prefs.getString("ids", null)+"]";
+            Utility u = new Utility();
+            try {
+                u.getMovieDataFromJsonString(movieJsonListString);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            populateGridWithPosters(u.allurls,u.metadata);
             return true;
         }
 
