@@ -72,5 +72,39 @@
         android:layout_centerHorizontal="true"
         android:padding="10dp"
         android:layout_below="@id/leftpart"/>
+    <ins.com.mk.popularmovies.helper.MyTextView
+        android:text="@string/trailers_title"
+        android:id="@+id/trailers_title"
+        android:textSize="15dp"
+        android:padding="5dp"
+        android:textColor="@color/white"
+        android:background="@color/parisblue2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/plot"
+        />
+    <ListView
+        android:id="@+id/listview_trailers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/trailers_title"
+        />
+    <ins.com.mk.popularmovies.helper.MyTextView
+        android:text="@string/reviews_title"
+        android:id="@+id/reviews_title"
+        android:textSize="15dp"
+        android:padding="5dp"
+        android:textColor="@color/white"
+        android:background="@color/parisblue2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/listview_trailers"
+        />
+    <ListView
+        android:id="@+id/listview_reviews"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/reviews_title"
+        />
 </RelativeLayout>
 </ScrollView>

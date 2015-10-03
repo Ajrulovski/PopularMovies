@@ -2,6 +2,10 @@
     <string name="app_name">PopularMovies</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="reviews_title">Reviews</string>
+    <string name="trailers_title">Trailers</string>
+    <string name="no_reviews_title">No reviews found :(</string>
+    <string name="no_trailers_title">No trailers found :(</string>
     <string name="action_popular">Sort by popular</string>
     <string name="action_rated">Sort by highest rated</string>
     <string name="action_order_by_favourite">My favourites</string>

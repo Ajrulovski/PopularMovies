@@ -3,19 +3,34 @@ package ins.com.mk.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import ins.com.mk.popularmovies.data.ReviewListAdapter;
+import ins.com.mk.popularmovies.data.TrailerListAdapter;
+import ins.com.mk.popularmovies.helper.Utility;
+import ins.com.mk.popularmovies.sync.ReviewAPIAsyncTask;
+import ins.com.mk.popularmovies.sync.TrailerAPIAsyncTask;
 
 public class DetailView extends ActionBarActivity {
     SharedPreferences prefs;
@@ -23,6 +38,7 @@ public class DetailView extends ActionBarActivity {
     private Menu mainmenu;
     String movieid;
     String detailValues;
+    String[] jsonTrailerValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +83,38 @@ public class DetailView extends ActionBarActivity {
 
             TextView tvReleaseDate = (TextView) findViewById(R.id.releasedate);
             tvReleaseDate.setText(row.getString("releasedate"));
+
+            // fetch the review and trailer data
+            startReviewTask(movieid);
+            startTrailerTask(movieid);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        ListView listView = (ListView) findViewById(R.id.listview_trailers);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getApplicationContext(),
+                //        "Click ListItem Number " + position, Toast.LENGTH_LONG)
+                //        .show();
+
+                // get the videokey
+                //JSONObject row = resultsArray.getJSONObject(i);
+                try {
+                    JSONObject row = new JSONObject(jsonTrailerValues[position]);
+                    String videokey = row.getString("key");
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v="+videokey)));
+                }
+                catch (JSONException e) {
+                    Log.e("JSON_ERROR", e.getMessage(), e);
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
 
     }
 
@@ -108,6 +153,91 @@ public class DetailView extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startReviewTask(String movieid) {
+        if (isNetworkAvailable()) {
+            ReviewAPIAsyncTask webServiceTask = new ReviewAPIAsyncTask();
+            webServiceTask.execute(movieid, this);
+        }
+        else
+        {
+            Toast toast = Toast.makeText(getApplicationContext(), "No network connection. Please check your internet connection and try again.", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+    private void startTrailerTask(String movieid) {
+        if (isNetworkAvailable()) {
+            TrailerAPIAsyncTask webServiceTask = new TrailerAPIAsyncTask();
+            webServiceTask.execute(movieid, this);
+        }
+        else
+        {
+            Toast toast = Toast.makeText(getApplicationContext(), "No network connection. Please check your internet connection and try again.", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    // bind the GridView with the adapter
+    public void populateReviewList(ArrayList<JSONObject> metadata){
+        //prepare the review layout
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.review_list_item, metadata);
+        //String jsonValues = metadata.toString();
+        String[] jsonValues = new String[metadata.size()];
+        for (int i = 0; i < metadata.size(); i++) {
+            jsonValues[i] = metadata.get(i).toString();
+        }
+
+        if (jsonValues.length > 0) {
+            //JSONArray resultsArray = metadata.toString();
+            ReviewListAdapter rla = new ReviewListAdapter(this, jsonValues);
+            ListView lv = (ListView) findViewById(R.id.listview_reviews);
+            lv.setAdapter(rla);
+
+            // having a listview inside of a scrollview makes the listview show only one item
+            // this function fixes that
+            Utility.setListViewHeightBasedOnChildren(lv);
+        }
+        else
+        {
+            TextView reviewTitleText = (TextView) findViewById(R.id.reviews_title);
+            reviewTitleText.setText(R.string.no_reviews_title);
+        }
+    }
+
+    // bind the GridView with the adapter
+    public void populateTrailerList(ArrayList<JSONObject> metadata){
+        //prepare the review layout
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.review_list_item, metadata);
+        //String jsonValues = metadata.toString();
+        jsonTrailerValues = new String[metadata.size()];
+        for (int i = 0; i < metadata.size(); i++) {
+            jsonTrailerValues[i] = metadata.get(i).toString();
+        }
+
+        if (jsonTrailerValues.length > 0) {
+            //JSONArray resultsArray = metadata.toString();
+            TrailerListAdapter rla = new TrailerListAdapter(this, jsonTrailerValues);
+            ListView lv = (ListView) findViewById(R.id.listview_trailers);
+            lv.setAdapter(rla);
+
+            // having a listview inside of a scrollview makes the listview show only one item
+            // this function fixes that
+            Utility.setTrailerListViewHeightBasedOnChildren(lv);
+        }
+        else
+        {
+            TextView trailerTitleText = (TextView) findViewById(R.id.trailers_title);
+            trailerTitleText.setText(R.string.no_trailers_title);
+        }
     }
 
     public boolean isFaved(String title){
