@@ -16,7 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import ins.com.mk.popularmovies.Discovery;
+import ins.com.mk.popularmovies.DiscoveryFragment;
 
 /**
  * Created by Gazmend on 7/21/2015.
@@ -24,7 +24,7 @@ import ins.com.mk.popularmovies.Discovery;
 
 public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
 
-    Discovery callerActivity;
+    DiscoveryFragment callerActivity;
     public final String LOG_TAG = MovieAPIAsyncTask.class.getSimpleName();
     ArrayList<String> allurls = new ArrayList<String>();
     ArrayList<JSONObject> metadata = new ArrayList<JSONObject>();
@@ -32,8 +32,8 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
     @Override
     protected String doInBackground(Object... params) {
         String sortby = (String) params[0];
-        callerActivity = (Discovery) params[1];
-        String apikey = "fd0b9e13dcced1f221059f5bc4f944ed";
+        callerActivity = (DiscoveryFragment) params[1];
+        String apikey = "API_KEY";
 
         String res = null;
 
@@ -184,7 +184,10 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
     protected void onPostExecute(String response) {
         try
         {
-            callerActivity.populateGridWithPosters(allurls,metadata);
+            callerActivity.populateGridWithPosters(allurls, metadata);
+            //if(!Discovery.mTwoPane) {
+            callerActivity.populateDetailViewDefault(metadata);
+            //}
         }
         catch(Exception e)
         {

@@ -16,7 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import ins.com.mk.popularmovies.DetailView;
+import ins.com.mk.popularmovies.DetailFragment;
 
 /**
  * Created by Gazmend on 7/21/2015.
@@ -24,15 +24,15 @@ import ins.com.mk.popularmovies.DetailView;
 
 public class TrailerAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
 
-    DetailView callerActivity;
+    DetailFragment callerActivity;
     public final String LOG_TAG = TrailerAPIAsyncTask.class.getSimpleName();
     ArrayList<JSONObject> metadata = new ArrayList<JSONObject>();
 
     @Override
     protected String doInBackground(Object... params) {
         String id = (String) params[0];
-        callerActivity = (DetailView) params[1];
-        String apikey = "fd0b9e13dcced1f221059f5bc4f944ed";
+        callerActivity = (DetailFragment) params[1];
+        String apikey = "API_KEY";
 
         String res = null;
 
