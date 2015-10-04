@@ -41,7 +41,7 @@ public class TrailerAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        //Log.i("CALLED","CALLED!!!");
+
 
         // Will contain the raw JSON response as a string.
         String moviesJsonStr = null;
