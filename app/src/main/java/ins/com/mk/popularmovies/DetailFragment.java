@@ -133,7 +133,7 @@ public class DetailFragment extends Fragment {
                 // decode the JSON object and set the values for the views
                 try {
                     JSONObject row = new JSONObject(detailValues);
-
+                    Log.i("JSONSTRING",row.getString("id") );
                     movieid = row.getString("id");
 
                     TextView tvTitle = (TextView) rootView.findViewById(R.id.title);
@@ -302,16 +302,19 @@ public class DetailFragment extends Fragment {
 
     public boolean isFaved(String title){
         //first read the complete string with the favourited movie titles
-        String idstring = prefs.getString("ids", null);
+        boolean found = false;
 
-        boolean found;
-        //check if there is any movie in the fav list already
-        if(idstring != null){
-            //there are some movies in the list, so check if there is such a movie in the list already
-            found = idstring.indexOf(title) > 0;
-        }
-        else{
-            found = false;
+        if(title != null) {
+            String idstring = prefs.getString("ids", null);
+            //check if there is any movie in the fav list already
+            if (idstring != null) {
+                //there are some movies in the list, so check if there is such a movie in the list already
+                Log.i("IDSTRING", idstring);
+                Log.i("TITLE", title);
+                found = idstring.indexOf(title) > 0;
+            } else {
+                found = false;
+            }
         }
         return found;
     }
