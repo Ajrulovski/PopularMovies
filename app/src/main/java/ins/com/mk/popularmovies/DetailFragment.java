@@ -309,8 +309,6 @@ public class DetailFragment extends Fragment {
             //check if there is any movie in the fav list already
             if (idstring != null) {
                 //there are some movies in the list, so check if there is such a movie in the list already
-                Log.i("IDSTRING", idstring);
-                Log.i("TITLE", title);
                 found = idstring.indexOf(title) > 0;
             } else {
                 found = false;

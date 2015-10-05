@@ -58,6 +58,8 @@ public class DiscoveryFragment extends Fragment {
     ArrayList<MovieResult> list;
     MovieResult savedMovieResult;
     SharedPreferences prefs;
+    View rootView;
+    int lastGridPosition;
 
     /**
      * Use this factory method to create a new instance of
@@ -90,11 +92,17 @@ public class DiscoveryFragment extends Fragment {
         }
     }
 
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("object", savedMovieResult);
+        outState.putInt("lastpos", lastGridPosition);
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View rootView = inflater.inflate(R.layout.fragment_discovery, container, false);
+        rootView = inflater.inflate(R.layout.fragment_discovery, container, false);
         //check if we have already fetched the data from the query and we are not just rotating the view
         if(savedInstanceState == null || !savedInstanceState.containsKey("object")) {
             // fetch the movies info, by default show popularity
@@ -105,7 +113,9 @@ public class DiscoveryFragment extends Fragment {
         else {
             // if we have an instance state then read that and not call the API
             // read the data from parcelable
+
             savedMovieResult = savedInstanceState.getParcelable("object");
+            lastGridPosition = savedInstanceState.getInt("lastpos");
             Utility u = new Utility();
 
             try {
@@ -130,7 +140,7 @@ public class DiscoveryFragment extends Fragment {
                 if(!disc.mTwoPane)
                 {
                     Intent intent = new Intent(getActivity(), DetailView.class);
-
+                    lastGridPosition = position;
                     Bundle b = new Bundle();
                     b.putString("details", metadataByItem.get(position).toString()); //Your id
                     intent.putExtras(b); //Put your id to your next Intent
@@ -167,7 +177,7 @@ public class DiscoveryFragment extends Fragment {
     // run the async task
     private void startWebServiceTask(String sortCriteria) {
         if (isNetworkAvailable()) {
-            MovieAPIAsyncTask webServiceTask = new MovieAPIAsyncTask();
+            MovieAPIAsyncTask webServiceTask = new MovieAPIAsyncTask(rootView.getContext());
             webServiceTask.execute(sortCriteria, this);
         }
         else
@@ -182,17 +192,12 @@ public class DiscoveryFragment extends Fragment {
         Discovery disc = (Discovery)getActivity();
         if(disc.mTwoPane){
             Bundle arguments = new Bundle();
-            String p = metadata.get(0).toString();
+            String p = metadata.get(lastGridPosition).toString();
 
             arguments.putString("param1", p);
 
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(arguments);
-
-
-        //Log.i("POPULATING_DETAIL",metadata.toString());
-        // initialise the detail fragment
-
 
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -206,7 +211,7 @@ public class DiscoveryFragment extends Fragment {
     // bind the GridView with the adapter
     public void populateGridWithPosters(ArrayList<String> poster,ArrayList<JSONObject> metadata){
         // bind the gridview with the adapter
-        GridView gv = (GridView) getActivity().findViewById(R.id.gridView);
+        GridView gv = (GridView) rootView.findViewById(R.id.gridView);
         gv.setAdapter(new GridViewAdapter(getActivity(), poster));
 
         // fill the parcelable

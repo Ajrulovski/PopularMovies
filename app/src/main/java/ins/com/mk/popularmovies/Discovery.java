@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -40,14 +39,12 @@ public class Discovery extends ActionBarActivity implements DiscoveryFragment.On
 
         ((TextView)v.findViewById(R.id.title)).setText(this.getTitle());
         this.getSupportActionBar().setCustomView(v);
-        Log.i("ONE","ENTER");
         // check if we're using the app on phone or tablet
         if (findViewById(R.id.movie_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
             // in two-pane mode.
             mTwoPane = true;
-            Log.i("TWO","ENTER");
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
@@ -64,17 +61,16 @@ public class Discovery extends ActionBarActivity implements DiscoveryFragment.On
                 ft.commit();
             }
         } else {
-            Log.i("THREE","ENTER");
             mTwoPane = false;
             getSupportActionBar().setElevation(0f);
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("object", savedMovieResult);
-        super.onSaveInstanceState(outState);
-    }
+    //@Override
+    //protected void onSaveInstanceState(Bundle outState) {
+    //    outState.putParcelable("object", savedMovieResult);
+    //    super.onSaveInstanceState(outState);
+    //}
 
     @Override
     public void onFragmentInteraction(Uri uri) {

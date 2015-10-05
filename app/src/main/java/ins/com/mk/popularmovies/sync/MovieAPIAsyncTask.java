@@ -1,5 +1,7 @@
 package ins.com.mk.popularmovies.sync;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -16,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import ins.com.mk.popularmovies.Discovery;
 import ins.com.mk.popularmovies.DiscoveryFragment;
 
 /**
@@ -28,6 +31,13 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
     public final String LOG_TAG = MovieAPIAsyncTask.class.getSimpleName();
     ArrayList<String> allurls = new ArrayList<String>();
     ArrayList<JSONObject> metadata = new ArrayList<JSONObject>();
+    private ProgressDialog pDialog;
+    private Context myCtx;
+
+    public MovieAPIAsyncTask(Context ctx){
+        // Now set context
+        this.myCtx = ctx;
+    }
 
     @Override
     protected String doInBackground(Object... params) {
@@ -36,6 +46,8 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
         String apikey = "API_KEY";
 
         String res = null;
+
+        Log.i("FIRING","FIRING");
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -187,6 +199,7 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
             callerActivity.populateGridWithPosters(allurls, metadata);
             //if(!Discovery.mTwoPane) {
             callerActivity.populateDetailViewDefault(metadata);
+            pDialog.dismiss();
             //}
         }
         catch(Exception e)
@@ -199,6 +212,14 @@ public class MovieAPIAsyncTask extends AsyncTask<Object, Boolean, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        Discovery d = new Discovery();
+        pDialog = new ProgressDialog(myCtx);
+        pDialog.setMessage("Fetching awesome movies. Please wait...");
+        pDialog.setIndeterminate(false);
+        pDialog.setMax(100);
+        pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pDialog.setCancelable(true);
+        pDialog.show();
     }
 
 

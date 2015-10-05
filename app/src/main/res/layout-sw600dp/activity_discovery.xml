@@ -12,7 +12,7 @@
     -->
 
     <fragment
-        android:id="@+id/fragment_forecast"
+        android:id="@+id/discfrag"
         android:name="ins.com.mk.popularmovies.DiscoveryFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
